@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Last time visits</title>
+  </head>
+  <body>
+    <small></small>
+    <script type="module">
+      const res = await fetch("https://geolocation.microlink.io/")
+      const data = await res.json()
+      const {
+        city: { name: city },
+        country: { name: country, flag },
+      } = data
+
+      await fetch("/visit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ city, country, flag }),
+      })
+
+      const small = document.querySelector("small")
+      const source = new EventSource("/visit")
+
+      source.addEventListener("update", (e) => {
+        const { city, country, flag } = JSON.parse(e.data)
+        small.innerHTML = `Last visit from ${city}, ${country} ${flag}`
+      })
+    </script>
+    <style>
+      body {
+        background-color: #000;
+        display: grid;
+        place-content: center;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+      small {
+        color: #f6f6f6;
+        font-size: 20px;
+        font-family: Menlo, monospace;
+      }
+    </style>
+  </body>
+</html>
