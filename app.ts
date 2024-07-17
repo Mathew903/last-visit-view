@@ -59,7 +59,6 @@ app.get("/visit", (c) => {
             if (value != null)
                 await stream.writeSSE({ data: JSON.stringify(value), event: "update", id: String(i++) })
         }
-       
     })
 })
 
